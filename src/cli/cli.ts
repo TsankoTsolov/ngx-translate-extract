@@ -140,7 +140,12 @@ const cli = await y
 		type: 'boolean',
 		default: false
 	})
-	.group(['format', 'format-indentation', 'sort', 'sort-sensitivity', 'clean', 'replace', 'strip-prefix', 'trailing-newline', 'po-source-locations'], 'Output')
+	.option('verbose', {
+		describe: 'List all extracted files in the output',
+		type: 'boolean',
+		default: false
+	})
+	.group(['format', 'format-indentation', 'sort', 'sort-sensitivity', 'clean', 'replace', 'strip-prefix', 'trailing-newline', 'po-source-locations', 'verbose'], 'Output')
 	.group(['key-as-default-value', 'key-as-initial-default-value', 'null-as-default-value', 'string-as-default-value'], 'Extracted key value (defaults to empty string)')
 	.conflicts('key-as-default-value', 'null-as-default-value')
 	.conflicts('key-as-initial-default-value', 'null-as-default-value')
@@ -156,7 +161,8 @@ const cli = await y
 	.parse(process.argv);
 
 const extractTask = new ExtractTask(cli.input, cli.output, {
-	replace: cli.replace
+	replace: cli.replace,
+	verbose: cli.verbose
 });
 
 // Parsers

@@ -41,7 +41,7 @@ describe.concurrent('CLI Integration Tests', () => {
 	test('shows the expected output when extracting', async ({expect}) => {
 		const OUTPUT_FILE = createUniqueFileName('strings.json');
 		const fixtureFiles = await readdir(FIXTURES_PATH);
-		const { stdout } = await execAsync(`node ${CLI_PATH} --input ${FIXTURES_PATH} --output ${OUTPUT_FILE} --format=json`);
+		const { stdout } = await execAsync(`node ${CLI_PATH} --input ${FIXTURES_PATH} --output ${OUTPUT_FILE} --format=json --verbose`);
 
 		expect(stdout).toContain('Extracting:');
 		fixtureFiles.forEach(file => expect(stdout).toContain(file));
@@ -49,6 +49,20 @@ describe.concurrent('CLI Integration Tests', () => {
 		expect(stdout).toContain('Found 15 strings.');
 		expect(stdout).toContain('Saving:');
 
+		expect(stdout).toContain(OUTPUT_FILE);
+		expect(stdout).toContain('Done.');
+	})
+
+	test('does not show individual files in output without --verbose', async ({expect}) => {
+		const OUTPUT_FILE = createUniqueFileName('strings.json');
+		const fixtureFiles = await readdir(FIXTURES_PATH);
+		const { stdout } = await execAsync(`node ${CLI_PATH} --input ${FIXTURES_PATH} --output ${OUTPUT_FILE} --format=json`);
+
+		expect(stdout).toContain('Extracting:');
+		fixtureFiles.forEach(file => expect(stdout).not.toContain(file));
+
+		expect(stdout).toContain('Found 15 strings.');
+		expect(stdout).toContain('Saving:');
 		expect(stdout).toContain(OUTPUT_FILE);
 		expect(stdout).toContain('Done.');
 	})

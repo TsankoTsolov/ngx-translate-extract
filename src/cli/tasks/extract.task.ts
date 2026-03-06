@@ -13,11 +13,13 @@ import { NullCache } from '../../cache/null-cache.js';
 
 export interface ExtractTaskOptionsInterface {
 	replace?: boolean;
+	verbose?: boolean;
 }
 
 export class ExtractTask implements TaskInterface {
 	protected options: ExtractTaskOptionsInterface = {
-		replace: false
+		replace: false,
+		verbose: false
 	};
 
 	protected parsers: ParserInterface[] = [];
@@ -122,7 +124,9 @@ export class ExtractTask implements TaskInterface {
 				skipped += 1;
 				const cachedCollectionValues = this.cache.get(`${pattern}:${filePath}:${contents}`, () => {
 					skipped -= 1;
-					this.out(dim('- %s'), filePath);
+					if (this.options.verbose) {
+						this.out(dim('- %s'), filePath);
+					}
 					return this.parsers
 						.map((parser) => {
 							const extracted = parser.extract(contents, filePath);
@@ -135,7 +139,7 @@ export class ExtractTask implements TaskInterface {
 			});
 		});
 
-		if (skipped) {
+		if (skipped && this.options.verbose) {
 			this.out(dim('- %s unchanged files skipped via cache'), skipped);
 		}
 
